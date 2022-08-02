@@ -19,18 +19,20 @@ class FileStorage:
     def new(self, obj):
 
         """ add new object to dictionary of objecsts"""
-        FileStorage.__objects[f"{obj.__class__.__name__}.{obj.id}"] = obj
+        FileStorage.__objects[
+            "{}.{}".format(obj.__class__.__name__, obj.id)] = obj.to_dict()
 
     def save(self):
 
         """ save objects dictionary to json file"""
-        print("objects = ", FileStorage.__objects)
         with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
-            json.dump(FileStorage.__objects, f)
+            f.write(json.dumps(FileStorage.__objects))
 
     def reload(self):
 
         """ Deserialize, load objects from json"""
         if FileStorage.__file_path:
             with open(FileStorage.__file_path, "r", encoding="utf-8") as f:
-                return json.load(f)
+                result = f.read()
+                if result:
+                    FileStorage.__objects = json.loads(result)
