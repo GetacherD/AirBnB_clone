@@ -58,6 +58,10 @@ class HBNBCommand(cmd.Cmd):
             storage.save()
             print(bm.id)
 
+    def help_create(self):
+        """write help message for create"""
+        print("Create a class of any type");
+
     def do_show(self, args):
 
         """ Print instance of object of given id"""
@@ -72,6 +76,10 @@ class HBNBCommand(cmd.Cmd):
             all = storage.all()
             obj = all.get("{}.{}".format(args.split(" ")[0], data[1]), "* no instance found **")
             print(obj)
+
+    def help_show(self):
+        """ Help information for the show command"""
+        print("Shows an individual instance of a class");
 
     def do_destroy(self, args):
 
@@ -91,6 +99,7 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
             storage.save()
+            
 
     def do_all(self, args):
 
