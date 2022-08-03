@@ -4,9 +4,10 @@ Console
 """
 import cmd
 import sys
+import json
+from datetime import datetime
 from models.base_model import BaseModel
 from models import storage
-from datetime import datetime
 from models.user import User
 from models.amenity import Amenity
 from models.city import City
@@ -19,13 +20,16 @@ class HBNBCommand(cmd.Cmd):
 
     """ command line interface"""
     prompt = "(hbnb)"
+    __classes = {"BaseModel": BaseModel, "State": State,
+                 "Place": Place, "Review": Review,
+                 "Amenity": Amenity, "User": User, "City": City}
 
     def do_quit(self, args):
 
         """ enter quit to Exit program"""
-        if args:
+        try:
             sys.exit(int(args))
-        else:
+        except (ValueError, TypeError):
             sys.exit(0)
 
     def do_EOF(self, args):
@@ -34,128 +38,191 @@ class HBNBCommand(cmd.Cmd):
         print(args)
         sys.exit(-1)
 
-    def help_quit(self):
-
-        """ Help for quit command """
-        print("Syntax: quit exit_status")
-        print("Quit command to exit the program")
-
-    def help_EOF(self):
-
-        """ help for EOF cmd"""
-        print("press CTRL+ D to quit")
-
     def do_create(self, args):
 
-        """ Create New Object of BaseModel"""
+        """ Create New Object of BaseModel
+            Syntax: create [ModelName]"""
         if not args:
             print("** class name missing **")
-        elif "class" not in str(globals().get(args.split(" ")[0])):
+        elif args not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         else:
-            storage.reload()
-            bm = eval(f"{args.split(' ')[0]}()")
-            storage.save()
-            print(bm.id)
-
-    def help_create(self):
-        """write help message for create"""
-        print("Create a class of any type");
+            new_object = HBNBCommand.__classes[args]()
+            new_object.save()
+            print(new_object.id)
 
     def do_show(self, args):
 
-        """ Print instance of object of given id"""
-        data = args.split(" ")
+        """ Print instance of object of given id
+         Syntax: show [ModelName] [id]"""
         if not args:
             print("** class name missing **")
-        elif "class" not in str(globals().get(args.split(" ")[0])):
-            print("** class doesn't exist **")
-        elif len(data) == 1:
-            print("** instance id missing **")
-        else:
-            all = storage.all()
-            obj = all.get("{}.{}".format(args.split(" ")[0], data[1]), "* no instance found **")
-            print(obj)
-
-    def help_show(self):
-        """ Help information for the show command"""
-        print("Shows an individual instance of a class");
-
-    def do_destroy(self, args):
-
-        """ Destroy an object """
-        data = args.split(" ")
-        if not args:
-            print("** class name missing **")
-        elif "class" not in str(globals().get(args.split(" ")[0])):
-            print("** class doesn't exist ** ")
-        elif len(data) == 1:
-            print("** instance id missing **")
-        else:
-            all = storage.all()
-            obj = all.get("{}.{}".format(args.split(" ")[0], data[1]), "* no instance found **")
-            if obj != "* no instance found **":
-                del all["{}.{}".format(args.split(" ")[0], data[1])]
-            else:
-                print("** no instance found **")
-            storage.save()
-            
-
-    def do_all(self, args):
-
-        """ Print all objects """
-        if not args or "class" in str(globals().get(args)):
-            all = storage.all()
-            ls = []
-            for key, value in all.items():
-                if not args:
-                    obj = {}
-                    for k, v in value.items():
-                        try:
-                            obj[k] = datetime.fromisoformat(v)
-                        except Exception:
-                            obj[k] = v
-                    ls.append("[{}] ({}) {}".format(key.split(".")[0], key.split(".")[1], obj))
-                elif key.split(".")[0] == args.split(" ")[0]:
-                    obj = {}
-                    for k, v in value.items():
-                        try:
-                            obj[k] = datetime.fromisoformat(v)
-                        except Exception:
-                            obj[k] = v
-                    ls.append("[{}] ({}) {}".format(key.split(".")[0], key.split(".")[1], obj))
-            print(ls)
-        else:
-            print("** class doesn't exist **")
-
-    def do_update(self, args):
-
-        """ update /add attribute"""
-        if not args:
-            print("** class name missing **")
-        elif "class" not in str(globals().get(args.split(" ")[0])):
+        elif args.split(" ")[0] not in HBNBCommand.__classes:
             print("** class doesn't exist **")
         elif len(args.split(" ")) == 1:
             print("** instance id missing **")
-        elif len(args.split(" ")) == 2:
-            print("** attribute name missing **")
-        elif len(args.split(" ")) == 3:
-            print("** value missing **")
         else:
-            all = storage.all()
-            key = "{}.{}".format(args.split(" ")[0], args.split(" ")[1])
-            obj = all.get(key, "Not Found")
-            if obj == "Not Found":
+            objects = storage.all()
+            class_name = args.split(" ")[0]
+            _id = args.split(" ")[-1]
+            obj = objects.get(f"{class_name}.{_id}", "* no instance found **")
+            print(obj)
+
+    def do_destroy(self, args):
+
+        """ Destroy an object \n Syntax: destroy [ModelName] [id]"""
+        if not args:
+            print("** class name missing **")
+        elif args.split(" ")[0] not in HBNBCommand.__classes:
+            print("** class doesn't exist ** ")
+        elif len(args.split(" ")) == 1:
+            print("** instance id missing **")
+        else:
+            objects = storage.all()
+            class_name = args.split(" ")[0]
+            _id = args.split(" ")[-1]
+            obj = objects.get(f"{class_name}.{_id}", "* no instance found **")
+            if obj != "* no instance found **":
+                del objects[f"{class_name}.{_id}"]
+            else:
+                print("** no instance found **")
+            storage.save()
+
+    def do_all(self, args):
+
+        """ Print all objects
+            Syntax: all [ModelName] (optional)"""
+        if args and args in HBNBCommand.__classes:
+            objects = storage.all()
+            obj_list = []
+            for key, value in objects.items():
+                obj = {}
+                if key.split(".")[0] == args.split(" ")[0]:
+                    for k, val in value.items():
+                        try:
+                            obj[k] = datetime.fromisoformat(val)
+                        except ValueError:
+                            obj[k] = val
+                    obj_list.append(
+                        f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}")
+            print(obj_list)
+        elif args and args not in HBNBCommand.__classes:
+            print("** class doesn't exist **")
+        else:
+            objects = storage.all()
+            obj_list = []
+            for key, value in objects.items():
+                obj = {}
+                for k, val in value.items():
+                    try:
+                        obj[k] = datetime.fromisoformat(val)
+                    except ValueError:
+                        obj[k] = val
+                obj_list.append(
+                    f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}"
+                )
+            print(obj_list)
+
+    def do_update(self, args):
+
+        """ update /add attribute
+            Syntax: update [ModelName] [id] [attribute] [value]"""
+        if not args:
+            print("** class name missing **")
+        elif args.split(" ")[0] not in HBNBCommand.__classes:
+            print("** class doesn't exist **")
+        else:
+            data = []
+            for item in args.split(" ")[1:]:
+                if item:
+                    data.append(item)
+            if len(data) == 0:
                 print("** instance id missing **")
             else:
-                new = {}
-                new["id"] = args.split(" ")[1]
-                new["created_at"] = (all.get(key)).get("created_at")
-                new["updated_at"] = (all.get(key)).get("updated_at")
-                new[args.split(" ")[2]] = args.split(" ")[3]
-                del all[key]
-                N = eval("{}(**new)".format(args.split(" ")[0]))
-                N.save()
+                objects = storage.all()
+                key = f"{args.split(' ')[0]}.{data[0]}"
+                obj = objects.get(key, None)
+                if not obj:
+                    print("** no instance found **")
+                elif obj and len(data) == 1:
+                    print("** attribute name missing **")
+                elif obj and len(data) == 2:
+                    print("** value missing **")
+                else:
+                    new_object = {}
+                    new_object["id"] = data[0]
+                    for k, val in obj.items():
+                        new_object[k] = val
+                    new_object[data[1]] = data[2]
+                    del objects[key]
+                    newobj = HBNBCommand.__classes[
+                        args.split(" ")[0]](**new_object)
+                    newobj.save()
+
+    def default(self, line):
+
+        """ Default action when command not Known"""
+        if len(line.split(".")) > 1 and line.split(".")[1] == "all()":
+            obj_list = []
+            for key, value in storage.all().items():
+                if key.split(".")[0] == line.split(".")[0]:
+                    obj = {}
+                    for k, val in value.items():
+                        try:
+                            obj[k] = datetime.fromisoformat(val)
+                        except ValueError:
+                            obj[k] = val
+                    obj_list.append(
+                        f"[{line.split('.')[0]}] ({key.split('.')[1]}) {obj}")
+            print(obj_list)
+        elif len(line.split(".")) > 1 and line.split(".")[1] == "count()":
+            count = 0
+            for key in storage.all():
+                if key.split(".")[0] == line.split(".")[0]:
+                    count += 1
+            print(count)
+        elif len(line.split(".")) > 1 and line.split(
+                ".")[1].split("(")[0] == "show":
+
+            _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
+            self.do_show(f"{line.split('.')[0]} {_id}")
+        elif len(line.split('.')) > 1 and line.split(
+                ".")[1].split("(")[0] == "destroy":
+            _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
+            self.do_destroy(f"{line.split('.')[0]} {_id}")
+        elif len(line.split(".")) > 1 and line.split(
+                ".")[1].split("(")[0] == "update":
+            data = [line.split(".")[0]]
+            js_dict = None
+            dic = line.split("(")[1].split(
+                ",")
+            if len(dic) > 1:
+                dic = ",".join(dic[1:]).split(")")[0].strip()
+            try:
+                js_dict = json.loads(dic)
+                _id = line.split("(")[1].split(",")[0].strip()
+                if _id[0] in ["'", '"']:
+                    _id = _id[1:]
+                if _id[-1] in ["'", '"']:
+                    _id = _id[:-1]
+                data.append(_id)
+                _id = data[::1]
+                for k, val in js_dict.items():
+                    data.append(k)
+                    data.append(val)
+                    self.do_update(" ".join(data))
+                    data = _id[::1]
+            except json.decoder.JSONDecodeError:
+                if len(line.split("(")) > 1:
+                    att = line.split("(")[1].split(")")[0].split(",")
+                    for item in att:
+                        item = item.strip()
+                        if item and item[0] in ["'", '"']:
+                            item = item[1:]
+                        if item and item[-1] in ["'", '"']:
+                            item = item[:-1]
+                        data.append(item)
+                    self.do_update(" ".join(data))
 
 
 if __name__ == "__main__":

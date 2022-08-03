@@ -4,6 +4,7 @@ File Storage Module
 """
 import json
 from json import JSONEncoder
+from json import JSONDecoder
 from datetime import datetime
 from os.path import exists
 
@@ -17,6 +18,24 @@ class DateTimeEncoder(JSONEncoder):
         if isinstance(o, (datetime, datetime.date)):
             return o.isoformat()
         return super().default(o)
+
+
+class DateTimeDecoder(JSONDecoder):
+
+    """ Custom DateTimeDecoder """
+    def __init__(self, **kwargs):
+        kwargs.setdefault("object_hook", self.object_hook)
+        super().__init__(**kwargs)
+
+    def object_hook(self, dict_):
+        """Try to decode a complex number."""
+        dic = {}
+        for key, value in dict_.items():
+            try:
+                dic[key] = datetime.fromisoformat(value)
+            except (ValueError, TypeError):
+                dic[key] = value
+        return dic
 
 
 class FileStorage:
@@ -34,19 +53,20 @@ class FileStorage:
 
         """ add new object to dictionary of objecsts"""
         FileStorage.__objects[
-            "{}.{}".format(obj.__class__.__name__, obj.id)] = obj.to_dict()
+            f"{obj.__class__.__name__}.{obj.id}"] = obj.to_dict()
 
     def save(self):
 
         """ save objects dictionary to json file"""
-        with open(FileStorage.__file_path, "w", encoding="utf-8") as f:
-            f.write(json.dumps(FileStorage.__objects, cls=DateTimeEncoder))
+        with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
+            file.write(json.dumps(FileStorage.__objects, cls=DateTimeEncoder))
 
     def reload(self):
 
         """ Deserialize, load objects from json"""
         if exists(FileStorage.__file_path):
-            with open(FileStorage.__file_path, "r", encoding="utf-8") as f:
-                result = f.read()
+            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
+                result = file.read()
                 if result:
-                    FileStorage.__objects = json.loads(result)
+                    FileStorage.__objects = json.loads(
+                        result, cls=DateTimeDecoder)
