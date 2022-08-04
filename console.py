@@ -33,6 +33,8 @@ class HBNBCommand(cmd.Cmd):
             sys.exit(0)
 
     def help_quit(self):
+
+        """ help doc """
         print("Enter Quit to Exit program")
 
     def do_EOF(self, args):
@@ -42,6 +44,8 @@ class HBNBCommand(cmd.Cmd):
         sys.exit(-1)
 
     def help_EOF(self):
+
+        """ hellp EOF """
         print("Exit Program on CTRL+D")
 
     def do_create(self, args):
@@ -58,6 +62,8 @@ class HBNBCommand(cmd.Cmd):
             print(new_object.id)
 
     def help_create(self):
+
+        """ doc create """
         print("Create New Object of BaseModel")
         print("[Syntax:] Create [ModelName]")
 
@@ -75,10 +81,12 @@ class HBNBCommand(cmd.Cmd):
             objects = storage.all()
             class_name = args.split(" ")[0]
             _id = args.split(" ")[-1]
-            obj = objects.get(f"{class_name}.{_id}", "* no instance found **")
+            obj = objects.get(f"{class_name}.{_id}", "** no instance found **")
             print(obj)
 
     def help_show(self):
+
+        """ doc """
         print("Print Instance of Object of given Id")
         print("[Syntax:] show [ModelName] [Id]")
 
@@ -88,21 +96,23 @@ class HBNBCommand(cmd.Cmd):
         if not args:
             print("** class name missing **")
         elif args.split(" ")[0] not in HBNBCommand.__classes:
-            print("** class doesn't exist ** ")
+            print("** class doesn't exist **")
         elif len(args.split(" ")) == 1:
             print("** instance id missing **")
         else:
             objects = storage.all()
             class_name = args.split(" ")[0]
             _id = args.split(" ")[-1]
-            obj = objects.get(f"{class_name}.{_id}", "* no instance found **")
-            if obj != "* no instance found **":
+            obj = objects.get(f"{class_name}.{_id}", None)
+            if obj:
                 del objects[f"{class_name}.{_id}"]
             else:
                 print("** no instance found **")
             storage.save()
 
     def help_destroy(self):
+
+        """ doc """
         print("Destroy an object")
         print("[Syntax:] destroy [ModelName] [id]")
 
@@ -119,7 +129,7 @@ class HBNBCommand(cmd.Cmd):
                     for k, val in value.items():
                         try:
                             obj[k] = datetime.fromisoformat(val)
-                        except ValueError:
+                        except (ValueError, TypeError):
                             obj[k] = val
                     obj_list.append(
                         f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}")
@@ -134,7 +144,7 @@ class HBNBCommand(cmd.Cmd):
                 for k, val in value.items():
                     try:
                         obj[k] = datetime.fromisoformat(val)
-                    except ValueError:
+                    except (ValueError, TypeError):
                         obj[k] = val
                 obj_list.append(
                     f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}"
@@ -142,6 +152,8 @@ class HBNBCommand(cmd.Cmd):
             print(obj_list)
 
     def help_all(self):
+
+        """ doc """
         print("Print all objects")
         print("[Syntax:] all [ModelName] (optional)")
 
@@ -182,6 +194,8 @@ class HBNBCommand(cmd.Cmd):
                     newobj.save()
 
     def help_update(self):
+
+        """ doc """
         print("Update or attribute")
         print("[Syntax:] update [ModelName] [id] [attribute] [value]")
 
@@ -190,65 +204,99 @@ class HBNBCommand(cmd.Cmd):
         """ Default action when command not Known"""
         if len(line.split(".")) > 1 and line.split(".")[1] == "all()":
             obj_list = []
-            for key, value in storage.all().items():
-                if key.split(".")[0] == line.split(".")[0]:
-                    obj = {}
-                    for k, val in value.items():
-                        try:
-                            obj[k] = datetime.fromisoformat(val)
-                        except ValueError:
-                            obj[k] = val
-                    obj_list.append(
-                        f"[{line.split('.')[0]}] ({key.split('.')[1]}) {obj}")
-            print(obj_list)
+            if line.split(".")[0] == "":
+                print("** class name missing **")
+            elif line.split(".")[0] not in HBNBCommand.__classes:
+                print("** class doesn't exist **")
+            else:
+                for key, value in storage.all().items():
+                    if key.split(".")[0] == line.split(".")[0]:
+                        obj = {}
+                        for k, val in value.items():
+                            try:
+                                obj[k] = datetime.fromisoformat(val)
+                            except ValueError:
+                                obj[k] = val
+                        obj_list.append(
+                            f"[{line.split('.')[0]}] ({key.split('.')[1]}) {obj}")
+                print(obj_list)
         elif len(line.split(".")) > 1 and line.split(".")[1] == "count()":
             count = 0
-            for key in storage.all():
-                if key.split(".")[0] == line.split(".")[0]:
-                    count += 1
-            print(count)
+            if line.split(".")[0] == "":
+                print("** class name missing **")
+            elif line.split(".")[0] not in HBNBCommand.__classes:
+                print("** class doesn't exist **")
+            else:
+                for key in storage.all():
+                    if key.split(".")[0] == line.split(".")[0]:
+                        count += 1
+                print(count)
         elif len(line.split(".")) > 1 and line.split(
                 ".")[1].split("(")[0] == "show":
 
-            _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
-            self.do_show(f"{line.split('.')[0]} {_id}")
+            if line.split(".")[0] == "":
+                print("** class name missing **")
+            elif line.split(".")[0] not in HBNBCommand.__classes:
+                print("** class doesn't exist **")
+            else:
+                _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
+                if _id:
+                    self.do_show(f"{line.split('.')[0]} {_id}")
+                else:
+                    self.do_destroy(f"{line.split('.')[0]}")
         elif len(line.split('.')) > 1 and line.split(
                 ".")[1].split("(")[0] == "destroy":
-            _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
-            self.do_destroy(f"{line.split('.')[0]} {_id}")
+            if line.split(".")[0] == "":
+                print("** class name missing **")
+            elif line.split(".")[0] not in HBNBCommand.__classes:
+                print("** class doesn't exist **")
+            else:
+                _id = line.split("(")[1].strip().split(")")[0].strip()[1:-1]
+                if _id:
+                    self.do_destroy(f"{line.split('.')[0]} {_id}")
+                else:
+                    self.do_destroy(f"{line.split('.')[0]}")
         elif len(line.split(".")) > 1 and line.split(
                 ".")[1].split("(")[0] == "update":
-            data = [line.split(".")[0]]
-            js_dict = None
-            dic = line.split("(")[1].split(
-                ",")
-            if len(dic) > 1:
-                dic = ",".join(dic[1:]).split(")")[0].strip()
-            try:
-                js_dict = json.loads(dic)
-                _id = line.split("(")[1].split(",")[0].strip()
-                if _id[0] in ["'", '"']:
-                    _id = _id[1:]
-                if _id[-1] in ["'", '"']:
-                    _id = _id[:-1]
-                data.append(_id)
-                _id = data[::1]
-                for k, val in js_dict.items():
-                    data.append(k)
-                    data.append(val)
-                    self.do_update(" ".join(data))
-                    data = _id[::1]
-            except json.decoder.JSONDecodeError:
-                if len(line.split("(")) > 1:
-                    att = line.split("(")[1].split(")")[0].split(",")
-                    for item in att:
-                        item = item.strip()
-                        if item and item[0] in ["'", '"']:
-                            item = item[1:]
-                        if item and item[-1] in ["'", '"']:
-                            item = item[:-1]
-                        data.append(item)
-                    self.do_update(" ".join(data))
+            if line.split(".")[0] == "":
+                print("** class name missing **")
+            elif line.split(".")[0] not in HBNBCommand.__classes:
+                print("** class doesn't exist **")
+            else:
+                data = [line.split(".")[0]]
+                js_dict = None
+                dic = line.split("(")[1].split(
+                    ",")
+                if len(dic) > 1:
+                    dic = ",".join(dic[1:]).split(")")[0].strip()
+                try:
+                    js_dict = json.loads(dic)
+                    _id = line.split("(")[1].split(",")[0].strip()
+                    if _id[0] in ["'", '"']:
+                        _id = _id[1:]
+                    if _id[-1] in ["'", '"']:
+                        _id = _id[:-1]
+                    data.append(_id)
+                    _id = data[::1]
+                    for k, val in js_dict.items():
+                        data.append(k)
+                        data.append(val)
+                        self.do_update(" ".join(data))
+                        data = _id[::1]
+                except (json.decoder.JSONDecodeError, TypeError):
+                    if len(line.split("(")) > 1:
+                        att = line.split("(")[1].split(")")[0].split(",")
+                        for item in att:
+                            item = item.strip()
+                            if item and item[0] in ["'", '"']:
+                                item = item[1:]
+                            if item and item[-1] in ["'", '"']:
+                                item = item[:-1]
+                            data.append(item)
+                        self.do_update(" ".join(data))
+        else:
+            print("Default")
+            super().default(line)
 
 
 if __name__ == "__main__":
