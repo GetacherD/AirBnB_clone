@@ -32,11 +32,17 @@ class HBNBCommand(cmd.Cmd):
         except (ValueError, TypeError):
             sys.exit(0)
 
+    def help_quit(self):
+        print("Enter Quit to Exit program")
+
     def do_EOF(self, args):
 
         """ Exit program on CTRL+D"""
         print(args)
         sys.exit(-1)
+
+    def help_EOF(self):
+        print("Exit Program on CTRL+D")
 
     def do_create(self, args):
 
@@ -50,6 +56,10 @@ class HBNBCommand(cmd.Cmd):
             new_object = HBNBCommand.__classes[args]()
             new_object.save()
             print(new_object.id)
+
+    def help_create(self):
+        print("Create New Object of BaseModel")
+        print("[Syntax:] Create [ModelName]")
 
     def do_show(self, args):
 
@@ -67,6 +77,10 @@ class HBNBCommand(cmd.Cmd):
             _id = args.split(" ")[-1]
             obj = objects.get(f"{class_name}.{_id}", "* no instance found **")
             print(obj)
+
+    def help_show(self):
+        print("Print Instance of Object of given Id")
+        print("[Syntax:] show [ModelName] [Id]")
 
     def do_destroy(self, args):
 
@@ -87,6 +101,10 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
             storage.save()
+
+    def help_destroy(self):
+        print("Destroy an object")
+        print("[Syntax:] destroy [ModelName] [id]")
 
     def do_all(self, args):
 
@@ -123,6 +141,10 @@ class HBNBCommand(cmd.Cmd):
                 )
             print(obj_list)
 
+    def help_all(self):
+        print("Print all objects")
+        print("[Syntax:] all [ModelName] (optional)")
+
     def do_update(self, args):
 
         """ update /add attribute
@@ -158,6 +180,10 @@ class HBNBCommand(cmd.Cmd):
                     newobj = HBNBCommand.__classes[
                         args.split(" ")[0]](**new_object)
                     newobj.save()
+
+    def help_update(self):
+        print("Update or attribute")
+        print("[Syntax:] update [ModelName] [id] [attribute] [value]")
 
     def default(self, line):
 
