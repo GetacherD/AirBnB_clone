@@ -7,18 +7,31 @@ from unittest.mock import patch
 import unittest
 from console import HBNBCommand
 import json
+import os
+from models import storage
+from models.engine.file_storage import DateTimeEncoder
+from models.user import User
 
 
 class TestConsole(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(cls):
+        os.system("touch file.json")
+
+    @classmethod
+    def tearDownClass(cls):
+        os.system("rm -f file.json")
     """ Test Console """
     def test_create_Ok(self):
 
         """ Testing Console create command """
         with patch('sys.stdout', new=StringIO()) as stdout:
             HBNBCommand().onecmd("create Place")
-            exp = len("78316448-0fde-40a0-8873-0deb49ebc28") + 2
-            self.assertEqual(exp, len(stdout.getvalue()))
+            _id = str(stdout.getvalue())[:-1]
+            key = f"Place.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
 
     def test_create_class_not_exist(self):
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -32,6 +45,14 @@ class TestConsole(unittest.TestCase):
             exp = "** class name missing **\n"
             self.assertEqual(exp, stdout.getvalue())
 
+    def test_show_ok(self):
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            obj = User()
+            obj.save()
+            HBNBCommand().onecmd(f"show User {obj.id}")
+            data = str(stdout.getvalue())
+            self.assertTrue(f"{obj.id}" in data)
     def test_show_class_not_exist(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -56,6 +77,15 @@ class TestConsole(unittest.TestCase):
             exp = "** no instance found **\n"
             self.assertEqual(exp, stdout.getvalue())
 
+    def test_destroy_ok(self):
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"destroy User {obj.id}")
+            HBNBCommand().onecmd("all")
+            data = str(stdout.getvalue())
+            self.assertTrue(str(obj.id) not in data)
+            
     def test_destroy_class_missing(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -105,17 +135,27 @@ class TestConsole(unittest.TestCase):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all")
-            lst = json.dumps(stdout.getvalue())
+            lst = json.dumps(stdout.getvalue(), cls=DateTimeEncoder)
             checks = ["datetime.datetime", "__class__",
                       "created_at", "updated_at", "id", "(", ")", "[", "]"]
             exp = True
             for item in checks:
                 if item not in lst:
                     exp = False
-            if lst in ['[]', '{}']:
+            if '[' in lst and ']' in lst:
                 exp = True
             self.assertTrue(exp)
 
+    def test_update_ok(self):
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"update User {obj.id} __attrib__  __Value__")
+            HBNBCommand().onecmd(f"show User {obj.id}")
+            data = str(stdout.getvalue())
+            self.assertTrue("__attrib__" in data and "__Value__" in data)
+        
     def test_update_class_missing(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -144,6 +184,24 @@ class TestConsole(unittest.TestCase):
             exp = "** no instance found **\n"
             self.assertEqual(exp, stdout.getvalue())
 
+    def test_update_attr_missing(self):
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"update User {obj.id}")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_update_attr_value_missing(self):
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"update User {obj.id} Name")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
     def test_model_dot_all(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -169,7 +227,7 @@ class TestConsole(unittest.TestCase):
             exp = "** class doesn't exist **\n"
             self.assertEqual(exp, stdout.getvalue())
 
-    def test_model_dot_cout_class_missing(self):
+    def test_model_dot_count_class_missing(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".count()")
@@ -274,4 +332,22 @@ class TestConsole(unittest.TestCase):
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.update('0.7')")
             exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_dot_update_attr_missing(self):
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"User.update({obj.id})")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_dot_update_attr_value_missing(self):
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"User.update({obj.id}, Name)")
+            exp = "** value missing **\n"
             self.assertEqual(exp, stdout.getvalue())

@@ -15,7 +15,8 @@ from models.base_model import BaseModel
 class TestBaseModel(unittest.TestCase):
 
     """ Test for BaseModel"""
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         os.system("touch ./file.json")
 
     def test_uniq_id(self):
@@ -70,7 +71,7 @@ class TestBaseModel(unittest.TestCase):
             d = data.get(f"BaseModel.{obj1.id}")
             obj3 = BaseModel(**d)
             self.assertEqual(obj3.id, obj1.id)
-
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
 
         os.system("rm ./file.json")

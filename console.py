@@ -215,7 +215,7 @@ class HBNBCommand(cmd.Cmd):
                         for k, val in value.items():
                             try:
                                 obj[k] = datetime.fromisoformat(val)
-                            except ValueError:
+                            except (ValueError, TypeError):
                                 obj[k] = val
                         obj_list.append(
                             f"[{line.split('.')[0]}] ({key.split('.')[1]}) {obj}")
@@ -295,7 +295,6 @@ class HBNBCommand(cmd.Cmd):
                             data.append(item)
                         self.do_update(" ".join(data))
         else:
-            print("Default")
             super().default(line)
 
 

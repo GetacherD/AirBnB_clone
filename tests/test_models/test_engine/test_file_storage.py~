@@ -1,0 +1,45 @@
+#!/usr/bin/python3
+"""
+Test File Storage
+"""
+from io import StringIO
+from unittest.mock import patch
+from datetime import datetime
+import unittest
+import os
+import json
+from models.user import User
+from models.engine.file_storage import FileStorage
+from models.engine.file_storage import DateTimeDecoder
+
+
+class TestFileStorage(unittest.TestCase):
+
+
+
+    def test_all(self):
+
+        obj1 = User()
+        obj1.save()
+        obj2 = User()
+        obj2.save()
+        obj3 = User()
+        obj3.save()
+        with open("file.json") as f:
+            data = json.loads(f.read(), cls=DateTimeDecoder)
+            count = 0
+            for key in data:
+                count += 1
+            self.assertEqual(3, count)
+
+    def test_new(self):
+
+        obj1 = User()
+        os.system("touch file.json")
+        with open("file.json") as f:
+            data = json.loads(f.read())
+            count = 0
+            print(data)
+            for key in data:
+                count += 1
+            self.assertEqual(1, count)
