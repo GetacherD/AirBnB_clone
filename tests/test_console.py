@@ -5,12 +5,20 @@ Testing The Console
 from io import StringIO
 from unittest.mock import patch
 import unittest
-from console import HBNBCommand
 import json
 import os
+from console import HBNBCommand
 from models import storage
 from models.engine.file_storage import DateTimeEncoder
 from models.user import User
+
+
+def setUpModule():
+    print("Testing Console")
+
+
+def tearDownModule():
+    print("\nEnd of Test Console")
 
 
 class TestConsole(unittest.TestCase):
@@ -21,9 +29,10 @@ class TestConsole(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
+        """ Test Console """
         os.system("rm -f file.json")
-    """ Test Console """
-    def test_create_Ok(self):
+
+    def test_create_ok(self):
 
         """ Testing Console create command """
         with patch('sys.stdout', new=StringIO()) as stdout:
@@ -53,12 +62,14 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd(f"show User {obj.id}")
             data = str(stdout.getvalue())
             self.assertTrue(f"{obj.id}" in data)
+
     def test_show_class_not_exist(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show Plac")
             exp = "** class doesn't exist **\n"
             self.assertTrue(exp, stdout.getvalue())
+
     def test_show_class_missing(self):
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show")
@@ -85,7 +96,7 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("all")
             data = str(stdout.getvalue())
             self.assertTrue(str(obj.id) not in data)
-            
+
     def test_destroy_class_missing(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -155,7 +166,7 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd(f"show User {obj.id}")
             data = str(stdout.getvalue())
             self.assertTrue("__attrib__" in data and "__Value__" in data)
-        
+
     def test_update_class_missing(self):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -303,8 +314,6 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("User.destroy('0.7')")
             exp = "** no instance found **\n"
             self.assertEqual(exp, stdout.getvalue())
-
-
 
     def test_dot_update_class_missing(self):
 

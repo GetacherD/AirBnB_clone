@@ -33,7 +33,7 @@ class DateTimeDecoder(JSONDecoder):
         for key, value in dict_.items():
             try:
                 dic[key] = datetime.fromisoformat(value)
-            except (ValueError, TypeError):
+            except (ValueError, TypeError, json.decoder.JSONDecodeError):
                 dic[key] = value
         return dic
 
@@ -70,3 +70,5 @@ class FileStorage:
                 if result:
                     FileStorage.__objects = json.loads(
                         result, cls=DateTimeDecoder)
+                else:
+                    FileStorage.__objects = {}

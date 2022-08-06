@@ -2,14 +2,21 @@
 """
 Test For base_model
 """
-from io import StringIO
-from unittest.mock import patch
 import unittest
 import datetime
-from time import sleep
 import os
 import json
+from models.engine.file_storage import FileStorage
 from models.base_model import BaseModel
+storage = FileStorage()
+
+
+def setUpModule():
+    print("Test BaseModel\n")
+
+
+def tearDownModule():
+    print("\nEnd of test BaseModel")
 
 
 class TestBaseModel(unittest.TestCase):
@@ -57,8 +64,17 @@ class TestBaseModel(unittest.TestCase):
         created_at = dic.get("created_at")
         self.assertTrue("datetime" not in created_at)
 
+    def test_empty_object(self):
+
+        obj = BaseModel()
+        _id = str(obj.id)
+        objects = storage.all()
+        self.assertTrue(f"BaseModel.{_id}" in objects)
+
     def test_create_with_kwargs(self):
 
+        """ Test create empty obj, save it, create another obj1
+        from obj1 compare their id"""
         obj1 = BaseModel()
         obj1.save()
         obj2 = BaseModel(**{"id": obj1.id,
@@ -71,6 +87,7 @@ class TestBaseModel(unittest.TestCase):
             d = data.get(f"BaseModel.{obj1.id}")
             obj3 = BaseModel(**d)
             self.assertEqual(obj3.id, obj1.id)
+
     @classmethod
     def tearDownClass(cls):
 
