@@ -16,25 +16,31 @@ storage.reload()
 
 
 def setUpModule():
+    """Print before all test"""
     print("Testing FileStorage\n")
 
 
 def tearDownModule():
+    """print after all test"""
     print("\nEnd  of Testing FileStorage")
 
 
 class TestFileStorage(unittest.TestCase):
+    """Testing the file storage function"""
 
     @classmethod
     def setUpClass(cls):
-
+        """Create a file befor all test file run"""
         os.system("touch file.json")
 
     @classmethod
     def tearDownClass(cls):
+        """Create a file befor all test file run"""
+
         os.system("rm -r file.json")
 
     def test_all(self):
+        """Create a file befor all test file run"""
 
         obj1 = User()
         _id1 = obj1.id
@@ -55,6 +61,7 @@ class TestFileStorage(unittest.TestCase):
             self.assertTrue(exp)
 
     def test_new(self):
+        """Create a file befor all test file run"""
 
         obj = User()
         key = f"User.{obj.id}"
@@ -62,6 +69,8 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(key in objects)
 
     def test_save(self):
+        """Create a file befor all test file run"""
+
         os.system("touch file.json")
         os.system("rm file.json")
         self.assertFalse(exists("file.json"))
@@ -74,6 +83,8 @@ class TestFileStorage(unittest.TestCase):
         self.assertTrue(key in objects)
 
     def test_reload_empty_file(self):
+        """Create a file befor all test file run"""
+
         os.system("touch file.json")
         os.system("rm file.json")
         os.system("touch file.json")

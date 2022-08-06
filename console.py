@@ -48,6 +48,10 @@ class HBNBCommand(cmd.Cmd):
         """ hellp EOF """
         print("Exit Program on CTRL+D")
 
+    def emptyline(self):
+        """Overrides the emptyline without"""
+        pass
+
     def do_create(self, args):
 
         """ Create New Object of BaseModel
@@ -65,7 +69,7 @@ class HBNBCommand(cmd.Cmd):
 
         """ doc create """
         print("Create New Object of BaseModel")
-        print("[Syntax:] Create [ModelName]")
+        print("Syntax: Create [ModelName]")
 
     def do_show(self, args):
 
@@ -88,7 +92,7 @@ class HBNBCommand(cmd.Cmd):
 
         """ doc """
         print("Print Instance of Object of given Id")
-        print("[Syntax:] show [ModelName] [Id]")
+        print("Syntax: show [ModelName] [Id]")
 
     def do_destroy(self, args):
 
@@ -114,7 +118,7 @@ class HBNBCommand(cmd.Cmd):
 
         """ doc """
         print("Destroy an object")
-        print("[Syntax:] destroy [ModelName] [id]")
+        print("Syntax: destroy [ModelName] [id]")
 
     def do_all(self, args):
 
@@ -155,7 +159,7 @@ class HBNBCommand(cmd.Cmd):
 
         """ doc """
         print("Print all objects")
-        print("[Syntax:] all [ModelName] (optional)")
+        print("Syntax: all [ModelName] (optional)")
 
     def do_update(self, args):
 
@@ -197,7 +201,7 @@ class HBNBCommand(cmd.Cmd):
 
         """ doc """
         print("Update or attribute")
-        print("[Syntax:] update [ModelName] [id] [attribute] [value]")
+        print("Syntax: update [ModelName] [id] [attribute] [value]")
 
     def default(self, line):
 

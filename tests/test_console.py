@@ -14,27 +14,31 @@ from models.user import User
 
 
 def setUpModule():
+    """Run before all test"""
     print("Testing Console")
 
 
 def tearDownModule():
+    """Run after all test method"""
     print("\nEnd of Test Console")
 
 
 class TestConsole(unittest.TestCase):
+    """Test case console unit test""" 
 
     @classmethod
     def setUpClass(cls):
+        """create an empty file befor run all test"""
         os.system("touch file.json")
 
     @classmethod
     def tearDownClass(cls):
-        """ Test Console """
+        """Remove file after all test run """
         os.system("rm -f file.json")
 
     def test_create_ok(self):
-
         """ Testing Console create command """
+
         with patch('sys.stdout', new=StringIO()) as stdout:
             HBNBCommand().onecmd("create Place")
             _id = str(stdout.getvalue())[:-1]
@@ -43,18 +47,23 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(key in objects)
 
     def test_create_class_not_exist(self):
+        """ Testing class exist or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("create NOCLASS")
             exp = "** class doesn't exist **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_create_name_missing(self):
+        """testing if class name corect or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("create")
             exp = "** class name missing **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_show_ok(self):
+        """Testing show method"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             obj = User()
@@ -64,6 +73,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(f"{obj.id}" in data)
 
     def test_show_class_not_exist(self):
+        """testing if class exist or not"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show Plac")
@@ -71,24 +81,32 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(exp, stdout.getvalue())
 
     def test_show_class_missing(self):
+        """testing if class missied or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show")
             exp = "** class name missing **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_show_id_missing(self):
+        """Testing if id missied or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show BaseModel")
             exp = "** instance id missing **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_show_id_instance_not_found(self):
+        """Tasting if id exist or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("show BaseModel 0.5")
             exp = "** no instance found **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_destroy_ok(self):
+        """Testing the Destroy method working properly"""
+
         obj = User()
         obj.save()
         with patch("sys.stdout", new=StringIO()) as stdout:
@@ -98,6 +116,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(str(obj.id) not in data)
 
     def test_destroy_class_missing(self):
+        """testing if class missied or not"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("destroy")
@@ -105,6 +124,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_destroy_class_not_exist(self):
+        """Testing class exist or not"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("destroy Base")
@@ -112,6 +132,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_destroy_id_missing(self):
+        """Testing the id missied or not"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("destroy User")
@@ -119,12 +140,15 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_destroy_id_instance_not_found(self):
+        """Testing a given id exist in the file or not"""
+
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("destroy User 0.4")
             exp = "** no instance found **\n"
             self.assertEqual(exp, stdout.getvalue())
 
     def test_all_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all class")
@@ -132,6 +156,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_all_user(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all User")
@@ -143,6 +168,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(exp)
 
     def test_all(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all")
@@ -158,6 +184,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(exp)
 
     def test_update_ok(self):
+        """Testing update properly worked"""
 
         obj = User()
         obj.save()
@@ -168,6 +195,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue("__attrib__" in data and "__Value__" in data)
 
     def test_update_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("update")
@@ -175,6 +203,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_update_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("update myModel")
@@ -182,6 +211,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_update_id_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("update User")
@@ -189,6 +219,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_update_id_instance_not_found(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("update User 0.8")
@@ -196,6 +227,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_update_attr_missing(self):
+        """Testing class name not exist"""
 
         obj = User()
         obj.save()
@@ -205,6 +237,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_update_attr_value_missing(self):
+        """Testing class name not exist"""
 
         obj = User()
         obj.save()
@@ -214,6 +247,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_model_dot_all(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.all()")
@@ -225,6 +259,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(exp)
 
     def test_model_dot_count(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.count()")
@@ -232,6 +267,7 @@ class TestConsole(unittest.TestCase):
             self.assertTrue(exp)
 
     def test_model_dot_count_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("U.count()")
@@ -239,6 +275,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_model_dot_count_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".count()")
@@ -246,6 +283,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_model_dot_all_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".all()")
@@ -253,6 +291,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_model_dot_all_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("U.all()")
@@ -260,6 +299,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_show_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".show('1212')")
@@ -267,6 +307,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_show_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("a.show(12112)")
@@ -274,6 +315,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_show_id_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.show()")
@@ -281,6 +323,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_show_id_instance_not_found(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.show('0.7')")
@@ -288,6 +331,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_destroy_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".destroy('1212')")
@@ -295,6 +339,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_destroy_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("a.destroy(12112)")
@@ -302,6 +347,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_destroy_id_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.destroy()")
@@ -309,6 +355,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_destroy_id_instance_not_found(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.destroy('0.7')")
@@ -316,6 +363,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_class_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd(".update('1212')")
@@ -323,6 +371,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_class_not_exist(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("a.update(12112)")
@@ -330,6 +379,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_id_missing(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.update()")
@@ -337,6 +387,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("User.update('0.7')")
@@ -344,6 +395,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_attr_missing(self):
+        """Testing class name not exist"""
 
         obj = User()
         obj.save()
@@ -353,6 +405,7 @@ class TestConsole(unittest.TestCase):
             self.assertEqual(exp, stdout.getvalue())
 
     def test_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
 
         obj = User()
         obj.save()
