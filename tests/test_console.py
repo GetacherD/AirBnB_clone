@@ -24,8 +24,8 @@ def tearDownModule():
 
 
 class TestConsole(unittest.TestCase):
-    """Test case console unit test""" 
 
+    """Test case console unit test"""
     @classmethod
     def setUpClass(cls):
         """create an empty file befor run all test"""

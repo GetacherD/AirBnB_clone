@@ -221,8 +221,9 @@ class HBNBCommand(cmd.Cmd):
                                 obj[k] = datetime.fromisoformat(val)
                             except (ValueError, TypeError):
                                 obj[k] = val
-                        obj_list.append(
-                            f"[{line.split('.')[0]}] ({key.split('.')[1]}) {obj}")
+                        _key = line.split(".")[0]
+                        _val = key.split('.')[1]
+                        obj_list.append(f"[{_key}] ({_val}) {obj}")
                 print(obj_list)
         elif len(line.split(".")) > 1 and line.split(".")[1] == "count()":
             count = 0
