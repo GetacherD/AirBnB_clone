@@ -65,7 +65,7 @@ class FileStorage:
 
         """ Deserialize, load objects from json"""
         if exists(FileStorage.__file_path):
-            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
+            with open(FileStorage.__file_path, encoding="utf-8") as file:
                 result = file.read()
                 if result:
                     FileStorage.__objects = json.loads(
