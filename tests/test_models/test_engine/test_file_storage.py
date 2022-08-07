@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Test File Storage
+Test File Models.Storage
 """
 import unittest
 import os
@@ -8,25 +8,22 @@ import json
 from os.path import exists
 from models.user import User
 from models.engine.file_storage import FileStorage
-from models.engine.file_storage import DateTimeDecoder
 from models.engine.file_storage import DateTimeEncoder
-storage = FileStorage()
-
-storage.reload()
+import models
 
 
 def setUpModule():
     """Print before all test"""
-    print("Testing FileStorage\n")
+    print("Testing FileModels.Storage\n")
 
 
 def tearDownModule():
     """print after all test"""
-    print("\nEnd  of Testing FileStorage")
+    print("\nEnd  of Testing FileModels.Storage")
 
 
-class TestFileStorage(unittest.TestCase):
-    """Testing the file storage function"""
+class TestFileModelsFileStorage(unittest.TestCase):
+    """Testing the file models.storage function"""
 
     @classmethod
     def setUpClass(cls):
@@ -52,7 +49,7 @@ class TestFileStorage(unittest.TestCase):
         _id3 = obj3.id
         obj3.save()
         with open("file.json", encoding="utf-8") as f:
-            data = json.loads(f.read(), cls=DateTimeDecoder)
+            data = json.loads(f.read())
             ids = [f"User.{_id1}", f"User.{_id2}", f"User.{_id3}"]
             exp = True
             for key in ids:
@@ -65,7 +62,7 @@ class TestFileStorage(unittest.TestCase):
 
         obj = User()
         key = f"User.{obj.id}"
-        objects = json.dumps(storage.all(), cls=DateTimeEncoder)
+        objects = models.storage.all()
         self.assertTrue(key in objects)
 
     def test_save(self):
@@ -79,7 +76,7 @@ class TestFileStorage(unittest.TestCase):
         obj.save()
         self.assertTrue(exists("file.json"))
         key = f"User.{obj.id}"
-        objects = storage.all()
+        objects = models.storage.all()
         self.assertTrue(key in objects)
 
     def test_reload_empty_file(self):
@@ -88,6 +85,6 @@ class TestFileStorage(unittest.TestCase):
         os.system("touch file.json")
         os.system("rm file.json")
         os.system("touch file.json")
-        storage.reload()
-        objects = storage.all()
+        models.storage.reload()
+        objects = models.storage.all()
         self.assertEqual({}, objects)

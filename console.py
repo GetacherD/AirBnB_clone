@@ -4,10 +4,8 @@ Console
 """
 import cmd
 import sys
-import json
-from datetime import datetime
 from models.base_model import BaseModel
-from models import storage
+import models
 from models.user import User
 from models.amenity import Amenity
 from models.city import City
@@ -82,7 +80,8 @@ class HBNBCommand(cmd.Cmd):
         elif len(args.split(" ")) == 1:
             print("** instance id missing **")
         else:
-            objects = storage.all()
+            models.storage.reload()
+            objects = models.storage.all()
             class_name = args.split(" ")[0]
             _id = args.split(" ")[-1]
             obj = objects.get(f"{class_name}.{_id}", "** no instance found **")
@@ -104,7 +103,8 @@ class HBNBCommand(cmd.Cmd):
         elif len(args.split(" ")) == 1:
             print("** instance id missing **")
         else:
-            objects = storage.all()
+            models.storage.reload()
+            objects = models.storage.all()
             class_name = args.split(" ")[0]
             _id = args.split(" ")[-1]
             obj = objects.get(f"{class_name}.{_id}", None)
@@ -112,7 +112,7 @@ class HBNBCommand(cmd.Cmd):
                 del objects[f"{class_name}.{_id}"]
             else:
                 print("** no instance found **")
-            storage.save()
+            models.storage.save()
 
     def help_destroy(self):
 
@@ -125,35 +125,18 @@ class HBNBCommand(cmd.Cmd):
         """ Print all objects
             Syntax: all [ModelName] (optional)"""
         if args and args in HBNBCommand.__classes:
-            objects = storage.all()
-            obj_list = []
+            models.storage.reload()
+            objects = models.storage.all()
             for key, value in objects.items():
-                obj = {}
-                if key.split(".")[0] == args.split(" ")[0]:
-                    for k, val in value.items():
-                        try:
-                            obj[k] = datetime.fromisoformat(val)
-                        except (ValueError, TypeError):
-                            obj[k] = val
-                    obj_list.append(
-                        f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}")
-            print(obj_list)
-        elif args and args not in HBNBCommand.__classes:
-            print("** class doesn't exist **")
+                if key.split(".")[0] == args:
+                    print(value)
+        elif not args:
+            models.storage.reload()
+            objects = models.storage.all()
+            for value in objects.values():
+                print(value)
         else:
-            objects = storage.all()
-            obj_list = []
-            for key, value in objects.items():
-                obj = {}
-                for k, val in value.items():
-                    try:
-                        obj[k] = datetime.fromisoformat(val)
-                    except (ValueError, TypeError):
-                        obj[k] = val
-                obj_list.append(
-                    f"[{key.split('.')[0]}] ({key.split('.')[1]}) {obj}"
-                )
-            print(obj_list)
+            print("** class doesn't exist **")
 
     def help_all(self):
 
@@ -177,7 +160,8 @@ class HBNBCommand(cmd.Cmd):
             if len(data) == 0:
                 print("** instance id missing **")
             else:
-                objects = storage.all()
+                models.storage.reload()
+                objects = models.storage.all()
                 key = f"{args.split(' ')[0]}.{data[0]}"
                 obj = objects.get(key, None)
                 if not obj:
@@ -187,10 +171,8 @@ class HBNBCommand(cmd.Cmd):
                 elif obj and len(data) == 2:
                     print("** value missing **")
                 else:
-                    new_object = {}
-                    new_object["id"] = data[0]
-                    for k, val in obj.items():
-                        new_object[k] = val
+                    new_object = (obj.to_dict()).copy()
+                    del new_object["__class__"]
                     new_object[data[1]] = data[2]
                     del objects[key]
                     newobj = HBNBCommand.__classes[
@@ -213,17 +195,10 @@ class HBNBCommand(cmd.Cmd):
             elif line.split(".")[0] not in HBNBCommand.__classes:
                 print("** class doesn't exist **")
             else:
-                for key, value in storage.all().items():
+                models.storage.reload()
+                for key, value in models.storage.all().items():
                     if key.split(".")[0] == line.split(".")[0]:
-                        obj = {}
-                        for k, val in value.items():
-                            try:
-                                obj[k] = datetime.fromisoformat(val)
-                            except (ValueError, TypeError):
-                                obj[k] = val
-                        _key = line.split(".")[0]
-                        _val = key.split('.')[1]
-                        obj_list.append(f"[{_key}] ({_val}) {obj}")
+                        obj_list.append(str(value))
                 print(obj_list)
         elif len(line.split(".")) > 1 and line.split(".")[1] == "count()":
             count = 0
@@ -232,7 +207,7 @@ class HBNBCommand(cmd.Cmd):
             elif line.split(".")[0] not in HBNBCommand.__classes:
                 print("** class doesn't exist **")
             else:
-                for key in storage.all():
+                for key in models.storage.all():
                     if key.split(".")[0] == line.split(".")[0]:
                         count += 1
                 print(count)
@@ -248,7 +223,7 @@ class HBNBCommand(cmd.Cmd):
                 if _id:
                     self.do_show(f"{line.split('.')[0]} {_id}")
                 else:
-                    self.do_destroy(f"{line.split('.')[0]}")
+                    print("** instance id missing **")
         elif len(line.split('.')) > 1 and line.split(
                 ".")[1].split("(")[0] == "destroy":
             if line.split(".")[0] == "":
@@ -268,37 +243,53 @@ class HBNBCommand(cmd.Cmd):
             elif line.split(".")[0] not in HBNBCommand.__classes:
                 print("** class doesn't exist **")
             else:
-                data = [line.split(".")[0]]
-                js_dict = None
-                dic = line.split("(")[1].split(
-                    ",")
-                if len(dic) > 1:
-                    dic = ",".join(dic[1:]).split(")")[0].strip()
+                _id = None
+                _attr = None
+                _val = None
+                ok = True
                 try:
-                    js_dict = json.loads(dic)
-                    _id = line.split("(")[1].split(",")[0].strip()
-                    if _id[0] in ["'", '"']:
-                        _id = _id[1:]
-                    if _id[-1] in ["'", '"']:
-                        _id = _id[:-1]
-                    data.append(_id)
-                    _id = data[::1]
-                    for k, val in js_dict.items():
-                        data.append(k)
-                        data.append(val)
-                        self.do_update(" ".join(data))
-                        data = _id[::1]
-                except (json.decoder.JSONDecodeError, TypeError):
-                    if len(line.split("(")) > 1:
-                        att = line.split("(")[1].split(")")[0].split(",")
-                        for item in att:
-                            item = item.strip()
-                            if item and item[0] in ["'", '"']:
-                                item = item[1:]
-                            if item and item[-1] in ["'", '"']:
-                                item = item[:-1]
-                            data.append(item)
-                        self.do_update(" ".join(data))
+                    _id = line.split("(")[1].strip().split(
+                        ")")[0].strip().split(",")[0].strip()
+                    if len(_id) == 0:
+                        ok = False
+                        print("** instance id missing **")
+                    else:
+                        models.storage.reload()
+                        models.storage.reload()
+                        objects = models.storage.all()
+                        key = f"{line.split('.')[0]}.{_id[1:-1]}"
+                        obj = objects.get(key, None)
+                        if not obj:
+                            print("** no instance found **")
+                            ok = False
+                except IndexError:
+                    print("** instance id missing **")
+                    ok = False
+                if ok:
+                    try:
+                        _attr = line.split("(")[1].strip().split(
+                            ")")[0].strip().split(",")[1].strip()
+                        if _attr[0] in ["'", '"']:
+                            _attr = _attr[1:].strip()
+                        if _attr[-1] in ["'", '"']:
+                            _attr = _attr[:-1].strip()
+                    except IndexError:
+                        print("** attribute name missing **")
+                        ok = False
+                if ok:
+                    try:
+                        _val = line.split("(")[1].strip().split(
+                            ")")[0].strip().split(",")[2].strip()
+                        if _val[0] in ['"', "'"]:
+                            _val = _val[1:].strip()
+                        if _val[-1] in ["'", '"']:
+                            _val = _val[:-1].strip()
+                    except IndexError:
+                        print("** value missing **")
+                        ok = False
+                if ok:
+                    self.do_update(
+                        f"{line.split('.')[0]} {_id[1:-1]} {_attr} {_val}")
         else:
             super().default(line)
 

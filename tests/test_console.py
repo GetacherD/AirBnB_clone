@@ -9,7 +9,6 @@ import json
 import os
 from console import HBNBCommand
 from models import storage
-from models.engine.file_storage import DateTimeEncoder
 from models.user import User
 
 
@@ -160,7 +159,7 @@ class TestConsole(unittest.TestCase):
 
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all User")
-            lst = json.dumps(stdout.getvalue())
+            lst = str(stdout.getvalue())
             exp = True
             for item in ["BaseModel", "Place", "City", "Review", "Amenity"]:
                 if item in lst:
@@ -170,9 +169,11 @@ class TestConsole(unittest.TestCase):
     def test_all(self):
         """Testing class name not exist"""
 
+        obj = User()
+        obj.save()
         with patch("sys.stdout", new=StringIO()) as stdout:
             HBNBCommand().onecmd("all")
-            lst = json.dumps(stdout.getvalue(), cls=DateTimeEncoder)
+            lst = str(stdout.getvalue())
             checks = ["datetime.datetime", "__class__",
                       "created_at", "updated_at", "id", "(", ")", "[", "]"]
             exp = True
@@ -400,7 +401,7 @@ class TestConsole(unittest.TestCase):
         obj = User()
         obj.save()
         with patch("sys.stdout", new=StringIO()) as stdout:
-            HBNBCommand().onecmd(f"User.update({obj.id})")
+            HBNBCommand().onecmd(f"User.update('{obj.id}')")
             exp = "** attribute name missing **\n"
             self.assertEqual(exp, stdout.getvalue())
 
@@ -410,6 +411,6 @@ class TestConsole(unittest.TestCase):
         obj = User()
         obj.save()
         with patch("sys.stdout", new=StringIO()) as stdout:
-            HBNBCommand().onecmd(f"User.update({obj.id}, Name)")
+            HBNBCommand().onecmd(f"User.update('{obj.id}', Name)")
             exp = "** value missing **\n"
             self.assertEqual(exp, stdout.getvalue())

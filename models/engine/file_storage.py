@@ -2,11 +2,18 @@
 """
 File Storage Module
 """
+import os
 import json
 from json import JSONEncoder
-from json import JSONDecoder
 from datetime import datetime
 from os.path import exists
+from models.user import User
+from models.state import State
+from models.review import Review
+from models.amenity import Amenity
+from models.city import City
+from models.base_model import BaseModel
+from models.place import Place
 
 
 class DateTimeEncoder(JSONEncoder):
@@ -20,6 +27,7 @@ class DateTimeEncoder(JSONEncoder):
         return super().default(o)
 
 
+'''
 class DateTimeDecoder(JSONDecoder):
 
     """ Custom DateTimeDecoder """
@@ -37,6 +45,8 @@ class DateTimeDecoder(JSONDecoder):
                 dic[key] = value
         return dic
 
+'''
+
 
 class FileStorage:
 
@@ -53,22 +63,28 @@ class FileStorage:
 
         """ add new object to dictionary of objecsts"""
         FileStorage.__objects[
-            f"{obj.__class__.__name__}.{obj.id}"] = obj.to_dict()
+            f"{obj.__class__.__name__}.{obj.id}"] = obj
 
     def save(self):
 
         """ save objects dictionary to json file"""
+        # first convert each objects to json
+        objects = FileStorage.__objects
+        obj_dic = {key: objects[key].to_dict() for key in objects}
         with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
-            file.write(json.dumps(FileStorage.__objects, cls=DateTimeEncoder))
+            json.dump(obj_dic, file)
 
     def reload(self):
 
         """ Deserialize, load objects from json"""
-        if exists(FileStorage.__file_path):
+        FileStorage.__objects = {}
+        if exists(FileStorage.__file_path) and os.path.getsize(
+                FileStorage.__file_path) != 0:
             with open(FileStorage.__file_path, encoding="utf-8") as file:
-                result = file.read()
-                if result:
-                    FileStorage.__objects = json.loads(
-                        result, cls=DateTimeDecoder)
-                else:
-                    FileStorage.__objects = {}
+                result = json.load(file)
+                FileStorage.__objects = {}
+                for key, value in result.items():
+                    d = value.copy()
+                    cls_name = d["__class__"]
+                    del d["__class__"]
+                    self.new(eval(cls_name)(**d))

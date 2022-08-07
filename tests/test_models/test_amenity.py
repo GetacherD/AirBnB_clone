@@ -90,8 +90,8 @@ class TestAmenity(unittest.TestCase):
         obj1 = Amenity()
         obj1.save()
         obj2 = Amenity(**{"id": obj1.id,
-                          "created_at": obj1.created_at,
-                          "updated_at": obj1.updated_at,
+                          "created_at": obj1.created_at.isoformat(),
+                          "updated_at": obj1.updated_at.isoformat(),
                           "Name": "Bety", "Age": 4})
         self.assertEqual(obj2.to_dict().get("id"), obj1.id)
         with open('file.json', encoding="utf-8") as f:
