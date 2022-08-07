@@ -26,8 +26,7 @@ class BaseModel:
                             setattr(self, key, value)
                     else:
                         setattr(self, key, value)
-        else:
-            storage.new(self)
+        storage.new(self)
 
     def __str__(self):
 
