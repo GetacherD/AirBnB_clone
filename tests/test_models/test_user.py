@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """
-Test For base_model
+Test For User
 """
 import unittest
 import datetime
@@ -13,16 +13,16 @@ storage = FileStorage()
 
 def setUpModule():
     """Run before all test"""
-    print("Test BaseModel\n")
+    print("Test User\n")
 
 
 def tearDownModule():
     """Run after all test"""
-    print("\nEnd of test BaseModel")
+    print("\nEnd of test User")
 
 
-class TestBaseModel(unittest.TestCase):
-    """ Test for BaseModel"""
+class TestUser(unittest.TestCase):
+    """ Test for User"""
 
     @classmethod
     def setUpClass(cls):
