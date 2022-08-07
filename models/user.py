@@ -8,7 +8,7 @@ from models.base_model import BaseModel
 class User(BaseModel):
 
     """ User Representation """
-    email = ""
-    password = ""
-    first_name = ""
-    last_name = ""
+    email: str = ""
+    password: str = ""
+    first_name: str = ""
+    last_name: str = ""
