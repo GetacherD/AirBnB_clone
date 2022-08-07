@@ -4,6 +4,7 @@ Console
 """
 import cmd
 import sys
+import json
 from models.base_model import BaseModel
 import models
 from models.user import User
@@ -265,6 +266,27 @@ class HBNBCommand(cmd.Cmd):
                 except IndexError:
                     print("** instance id missing **")
                     ok = False
+                if ok:
+                    d = None
+                    try:
+                        d = json.loads(",".join(
+                            line.split("(")[1].strip().split(
+                                ")")[0].strip().split(",")[1:]))
+                        for kk, vv in d.items():
+                            if kk[0] in ["'", '"']:
+                                kk = kk[1:]
+                            if vv[0] in ["'", '"']:
+                                vv = vv[1:]
+                            if kk[-1] in ["'", '"']:
+                                kk = kk[:-1]
+                            if vv[-1] in ["'", '"']:
+                                vv = vv[:-1]
+                            self.do_update(
+                                f"{line.split('.')[0]} {_id[1:-1]} {kk} {vv}")
+                    except Exception:
+                        ok = True
+                    else:
+                        ok = False
                 if ok:
                     try:
                         _attr = line.split("(")[1].strip().split(
