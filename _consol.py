@@ -270,15 +270,9 @@ class HBNBCommand(cmd.Cmd):
                     d = None
                     try:
                         d = json.loads(line.split(",", maxsplit=1)[1].strip().split(")")[0].strip())
-                        models.storage.reload()
-                        obj = models.storage.all()[
-                            f"{line.split('.')[0]}.{_id[1:-1]}"]
-                        new_dict = obj.to_dict().copy()
-                        del new_dict["__class__"]
                         for kk, vv in d.items():
-                            new_dict[kk] = vv
-                        models.storage.new(eval(line.split(".")[0])(**new_dict))
-                        models.storage.save()
+                            self.do_update(
+                                f"{line.split('.')[0]} {_id[1:-1]} {kk} {vv}")
                     except Exception:
                         ok = True
                     else:
