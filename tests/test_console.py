@@ -10,7 +10,12 @@ import os
 from console import HBNBCommand
 from models import storage
 from models.user import User
-
+from models.base_model import BaseModel
+from models.city import City
+from models.review import Review
+from models.state import State
+from models.amenity import Amenity
+from models.place import Place
 
 def setUpModule():
     """Run before all test"""
@@ -746,3 +751,255 @@ class TestConsole(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("State.destroy(idf)")
         self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_user_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("User.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_user_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("User.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_user_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"User.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_user_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = User()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"User.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_base_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("BaseModel.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_base_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("BaseModel.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_base_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = BaseModel()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"BaseModel.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_base_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = BaseModel()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"BaseModel.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_place_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Place.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_place_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Place.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_place_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = Place()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"Place.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_place_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = Place()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"Place.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_city_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("City.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_city_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("City.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_city_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = City()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"City.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_city_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = City()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"City.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_state_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("State.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_state_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("State.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_state_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = State()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"State.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_state_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = State()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"State.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_review_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Review.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_review_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Review.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_review_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = Review()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"Review.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_review_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = Review()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"Review.update('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_amenity_dot_update_id_missing(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Amenity.update()")
+            exp = "** instance id missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_amenity_dot_update_id_instance_not_found(self):
+        """Testing class name not exist"""
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("Amenity.update('0.7')")
+            exp = "** no instance found **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_amenity_dot_update_attr_missing(self):
+        """Testing class name not exist"""
+
+        obj = Amenity()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"Amenity.update('{obj.id}')")
+            exp = "** attribute name missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
+
+    def test_amenity_dot_update_attr_value_missing(self):
+        """Testing class name not exist"""
+
+        obj = Amenity()
+        obj.save()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd(f"User.Amenity('{obj.id}', Name)")
+            exp = "** value missing **\n"
+            self.assertEqual(exp, stdout.getvalue())
