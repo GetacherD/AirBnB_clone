@@ -535,11 +535,6 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("BaseModel.count()")
         self.assertIsInstance(int(f.getvalue().strip()), int)
 
-    def test_userdotcount(self):
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("User.count()")
-        self.assertIsInstance(int(f.getvalue().strip()), int)
-
     def test_statedotcount(self):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("State.count()")
@@ -564,3 +559,72 @@ class TestConsole(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("Review.count()")
         self.assertIsInstance(int(f.getvalue().strip()), int)
+
+    def test_basedotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("BaseModel.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"BaseModel.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_citydotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("City.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"City.show({model_id})")
+        self.assertNotIn('[City]', f.getvalue())
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"City.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_statedotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("State.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"State.show({model_id})")
+        self.assertNotIn('[State]', f.getvalue())
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"State.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_placedotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Place.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"Place.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_amenitydotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Amenity.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"Amenity.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_reviewdotshow(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Review.show()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"Review.show(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
