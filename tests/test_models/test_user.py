@@ -39,6 +39,30 @@ class TestUser(unittest.TestCase):
             print(u.email)
             self.assertEqual("\n", stdout.getvalue())
 
+    def test_password(self):
+
+        """ test for email"""
+        u = User()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.password)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_first_name(self):
+
+        """ test for email"""
+        u = User()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.first_name)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_last_name(self):
+
+        """ test for email"""
+        u = User()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.last_name)
+            self.assertEqual("\n", stdout.getvalue())
+
     def test_uniq_id(self):
         """Remove file.json after all test"""
 
