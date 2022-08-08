@@ -41,27 +41,6 @@ class TestConsole(unittest.TestCase):
         """Remove file after all test run """
         os.system("rm -f file.json")
 
-    def test_help(self):
-
-        with patch("sys.stdout", new=StringIO()) as stdout:
-            self.assertTrue("EOF" in stdout.getvalue())
-
-    def test_quit(self):
-
-        with patch("sys.stdout", new=StringIO()) as stdout:
-            self.assertEqual(stdout.getvalue(), "")
-
-    def test_EOF(self):
-
-        with patch("sys.stdout", new=StringIO()) as stdout:
-            self.assertEqual("", stdout.getvalue())
-
-    def test_emptyline(self):
-
-        with patch("sys.stdout", new=StringIO()) as stdout:
-            HBNBCommand().onecmd("")
-            self.assertEqual("", stdout.getvalue())
-
     def test_create_base_model(self):
         """ Testing Console create command """
 
