@@ -35,13 +35,73 @@ class TestConsole(unittest.TestCase):
         """Remove file after all test run """
         os.system("rm -f file.json")
 
-    def test_create_ok(self):
+    def test_create_base_model(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create BaseModel")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"BaseModel.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_user(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create User")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"User.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_place(self):
         """ Testing Console create command """
 
         with patch('sys.stdout', new=StringIO()) as stdout:
             HBNBCommand().onecmd("create Place")
             _id = str(stdout.getvalue())[:-1]
             key = f"Place.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_city(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create City")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"City.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_amenity(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create Amenity")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"Amenity.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_review(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create Review")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"Review.{_id}"
+            objects = storage.all()
+            self.assertTrue(key in objects)
+
+    def test_create_state(self):
+        """ Testing Console create command """
+
+        with patch('sys.stdout', new=StringIO()) as stdout:
+            HBNBCommand().onecmd("create State")
+            _id = str(stdout.getvalue())[:-1]
+            key = f"State.{_id}"
             objects = storage.all()
             self.assertTrue(key in objects)
 
