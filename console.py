@@ -41,7 +41,7 @@ class HBNBCommand(cmd.Cmd):
         """ Exit program on CTRL+D"""
         print()
         return True
-        
+
     def help_EOF(self):
 
         """ hellp EOF """
@@ -49,7 +49,6 @@ class HBNBCommand(cmd.Cmd):
 
     def emptyline(self):
         """Overrides the emptyline without"""
-        pass
 
     def do_create(self, args):
 
@@ -269,7 +268,8 @@ class HBNBCommand(cmd.Cmd):
                 if ok:
                     d = None
                     try:
-                        d = json.loads(line.split(",", maxsplit=1)[1].strip().split(")")[0].strip())
+                        d = json.loads(line.split(
+                            ",", maxsplit=1)[1].strip().split(")")[0].strip())
                         models.storage.reload()
                         obj = models.storage.all()[
                             f"{line.split('.')[0]}.{_id[1:-1]}"]
@@ -277,7 +277,8 @@ class HBNBCommand(cmd.Cmd):
                         del new_dict["__class__"]
                         for kk, vv in d.items():
                             new_dict[kk] = vv
-                        models.storage.new(eval(line.split(".")[0])(**new_dict))
+                        models.storage.new(
+                            eval(line.split(".")[0])(**new_dict))
                         models.storage.save()
                     except Exception:
                         ok = True

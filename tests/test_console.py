@@ -433,12 +433,13 @@ class TestConsole(unittest.TestCase):
     def test_help(self):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help show")
-            strN = "Print Instance of Object of given Id\nSyntax: show [ModelName] [Id]\n"
-        self.assertEqual(strN, f.getvalue())
+            strn = "Print Instance of Object of given Id\n"
+            strn += "Syntax: show [ModelName] [Id]\n"
+        self.assertEqual(strn, f.getvalue())
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("help create")
-            strN = "Create New Object of a given\nSyntax: Create [ModelName]\n"
-        self.assertEqual(strN, f.getvalue())
+            strn = "Create New Object of a given\nSyntax: Create [ModelName]\n"
+        self.assertEqual(strn, f.getvalue())
 
     def test_basedotall(self):
         with patch('sys.stdout', new=StringIO()) as f:
@@ -624,11 +625,9 @@ class TestConsole(unittest.TestCase):
         self.assertEqual(f.getvalue(), '** instance id missing **\n')
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("create Review")
-        model_id = f.getvalue().strip()
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"Review.show(idf)")
+            HBNBCommand().onecmd("Review.show(idf)")
         self.assertEqual(f.getvalue(), '** no instance found **\n')
-
 
     def test_reviewdotdestroy(self):
         with patch('sys.stdout', new=StringIO()) as f:
@@ -636,9 +635,8 @@ class TestConsole(unittest.TestCase):
         self.assertEqual(f.getvalue(), '** instance id missing **\n')
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("create Review")
-        model_id = f.getvalue().strip()
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"Review.destroy(idf)")
+            HBNBCommand().onecmd("Review.destroy(idf)")
         self.assertEqual(f.getvalue(), '** no instance found **\n')
 
     def test_basedotdestroy(self):
@@ -646,5 +644,45 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd("BaseModel.destroy()")
         self.assertEqual(f.getvalue(), '** instance id missing **\n')
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"BaseModel.destroy(idf)")
+            HBNBCommand().onecmd("BaseModel.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_userdotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("User.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("User.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_placedotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Place.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Place.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_citydotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("City.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("City.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_amenitydotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Amenity.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Amenity.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_statedotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("State.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("State.destroy(idf)")
         self.assertEqual(f.getvalue(), '** no instance found **\n')

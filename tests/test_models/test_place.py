@@ -87,7 +87,6 @@ class TestPlace(unittest.TestCase):
             print(u.max_guest)
             self.assertEqual("0\n", stdout.getvalue())
 
-
     def test_price_by_night(self):
 
         """ test for email"""
