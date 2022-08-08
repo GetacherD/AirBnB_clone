@@ -6,6 +6,8 @@ import unittest
 import datetime
 import os
 import json
+from io import StringIO
+from unittest.mock import patch
 from models.engine.file_storage import FileStorage
 from models.place import Place
 storage = FileStorage()
@@ -28,6 +30,95 @@ class TestPlace(unittest.TestCase):
     def setUpClass(cls):
         """Create an empty file.json"""
         os.system("touch ./file.json")
+
+    def test_city_id(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.city_id)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_user_id(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.user_id)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_name(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.name)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_description(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.description)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_number_rooms(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.number_rooms)
+            self.assertEqual("0\n", stdout.getvalue())
+
+    def test_number_bathrooms(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.number_bathrooms)
+            self.assertEqual("0\n", stdout.getvalue())
+
+    def test_max_guest(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.max_guest)
+            self.assertEqual("0\n", stdout.getvalue())
+
+
+    def test_price_by_night(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.price_by_night)
+            self.assertEqual("0\n", stdout.getvalue())
+
+    def test_latitude(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.latitude)
+            self.assertEqual("0.0\n", stdout.getvalue())
+
+    def test_longitude(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.longitude)
+            self.assertEqual("0.0\n", stdout.getvalue())
+
+    def test_amenity_id(self):
+
+        """ test for email"""
+        u = Place()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.amenity_ids)
+            self.assertEqual("[]\n", stdout.getvalue())
 
     def test_uniq_id(self):
         """Remove file.json after all test"""

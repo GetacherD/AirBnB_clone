@@ -6,6 +6,8 @@ import unittest
 import datetime
 import os
 import json
+from io import StringIO
+from unittest.mock import patch
 from models.engine.file_storage import FileStorage
 from models.review import Review
 storage = FileStorage()
@@ -28,6 +30,30 @@ class TestReview(unittest.TestCase):
     def setUpClass(cls):
         """Create an empty file.json"""
         os.system("touch ./file.json")
+
+    def test_place_id(self):
+
+        """ test for email"""
+        u = Review()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.place_id)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_user_id(self):
+
+        """ test for email"""
+        u = Review()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.user_id)
+            self.assertEqual("\n", stdout.getvalue())
+
+    def test_text(self):
+
+        """ test for email"""
+        u = Review()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.text)
+            self.assertEqual("\n", stdout.getvalue())
 
     def test_uniq_id(self):
         """Remove file.json after all test"""
