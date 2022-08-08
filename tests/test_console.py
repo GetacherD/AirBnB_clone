@@ -28,6 +28,30 @@ def tearDownModule():
     print("\nEnd of Test Console")
 
 
+class testHelp(unittest.TestCase):
+    def test_help(self):
+
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("help")
+            self.assertTrue("help" in stdout.getvalue())
+
+
+class TestQuit(unittest.TestCase):
+
+    def test_quit(self):
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("quit")
+            self.assertEqual("", stdout.getvalue())
+
+
+class TestEOF(unittest.TestCase):
+
+    def test_EOF(self):
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            HBNBCommand().onecmd("EOF")
+            self.assertEqual("\n", stdout.getvalue())
+
+
 class TestConsole(unittest.TestCase):
 
     """Test case console unit test"""
