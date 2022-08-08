@@ -628,3 +628,23 @@ class TestConsole(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd(f"Review.show(idf)")
         self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+
+    def test_reviewdotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Review.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+        model_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"Review.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
+
+    def test_basedotdestroy(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("BaseModel.destroy()")
+        self.assertEqual(f.getvalue(), '** instance id missing **\n')
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"BaseModel.destroy(idf)")
+        self.assertEqual(f.getvalue(), '** no instance found **\n')
