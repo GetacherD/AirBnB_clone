@@ -414,3 +414,29 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd(f"User.update('{obj.id}', Name)")
             exp = "** value missing **\n"
             self.assertEqual(exp, stdout.getvalue())
+
+    def test_quit(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("quit")
+        self.assertEqual(f.getvalue(), '')
+
+    def test_EOF(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("EOF")
+        self.assertEqual(f.getvalue(), '\n')
+
+    def test_emptyline(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("")
+        self.assertEqual(f.getvalue(), '')
+
+    def test_help(self):
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help show")
+            strN = "Print Instance of Object of given Id\nSyntax: show [ModelName] [Id]\n"
+        self.assertEqual(strN, f.getvalue())
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help create")
+            strN = "Create New Object of a given\nSyntax: Create [ModelName]\n"
+        self.assertEqual(strN, f.getvalue())
+

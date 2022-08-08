@@ -4,6 +4,9 @@ Console
 """
 import cmd
 import sys
+import shlex
+import re
+import ast
 import json
 from models.base_model import BaseModel
 import models
@@ -18,18 +21,15 @@ from models.state import State
 class HBNBCommand(cmd.Cmd):
 
     """ command line interface"""
-    prompt = "(hbnb)"
+    prompt = "(hbnb) "
     __classes = {"BaseModel": BaseModel, "State": State,
                  "Place": Place, "Review": Review,
                  "Amenity": Amenity, "User": User, "City": City}
 
-    def do_quit(self, args):
+    def do_quit(self, arg):
 
         """ enter quit to Exit program"""
-        try:
-            sys.exit(int(args))
-        except (ValueError, TypeError):
-            sys.exit(0)
+        return True
 
     def help_quit(self):
 
@@ -39,9 +39,9 @@ class HBNBCommand(cmd.Cmd):
     def do_EOF(self, args):
 
         """ Exit program on CTRL+D"""
-        print(args)
-        sys.exit(-1)
-
+        print()
+        return True
+        
     def help_EOF(self):
 
         """ hellp EOF """
@@ -67,7 +67,7 @@ class HBNBCommand(cmd.Cmd):
     def help_create(self):
 
         """ doc create """
-        print("Create New Object of BaseModel")
+        print("Create New Object of a given")
         print("Syntax: Create [ModelName]")
 
     def do_show(self, args):
