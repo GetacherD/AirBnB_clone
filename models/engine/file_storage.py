@@ -77,7 +77,6 @@ class FileStorage:
     def reload(self):
 
         """ Deserialize, load objects from json"""
-        FileStorage.__objects = {}
         if exists(FileStorage.__file_path) and os.path.getsize(
                 FileStorage.__file_path) != 0:
             with open(FileStorage.__file_path, encoding="utf-8") as file:
@@ -88,3 +87,5 @@ class FileStorage:
                     cls_name = d["__class__"]
                     del d["__class__"]
                     self.new(eval(cls_name)(**d))
+        else:
+            return
