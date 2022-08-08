@@ -269,18 +269,8 @@ class HBNBCommand(cmd.Cmd):
                 if ok:
                     d = None
                     try:
-                        d = json.loads(",".join(
-                            line.split("(")[1].strip().split(
-                                ")")[0].strip().split(",")[1:]))
+                        d = json.loads(line.split(",", maxsplit=1)[1].strip().split(")")[0].strip())
                         for kk, vv in d.items():
-                            if kk[0] in ["'", '"']:
-                                kk = kk[1:]
-                            if vv[0] in ["'", '"']:
-                                vv = vv[1:]
-                            if kk[-1] in ["'", '"']:
-                                kk = kk[:-1]
-                            if vv[-1] in ["'", '"']:
-                                vv = vv[:-1]
                             self.do_update(
                                 f"{line.split('.')[0]} {_id[1:-1]} {kk} {vv}")
                     except Exception:
