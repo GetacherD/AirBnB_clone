@@ -4,8 +4,10 @@ Test For User
 """
 import unittest
 import datetime
+from unittest.mock import patch
 import os
 import json
+from io import StringIO
 from models.engine.file_storage import FileStorage
 from models.user import User
 storage = FileStorage()
@@ -28,6 +30,14 @@ class TestUser(unittest.TestCase):
     def setUpClass(cls):
         """Create an empty file.json"""
         os.system("touch ./file.json")
+
+    def test_email(self):
+
+        """ test for email"""
+        u = User()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.email)
+            self.assertEqual("\n", stdout.getvalue())
 
     def test_uniq_id(self):
         """Remove file.json after all test"""
