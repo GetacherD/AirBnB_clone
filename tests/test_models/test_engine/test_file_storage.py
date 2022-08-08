@@ -5,6 +5,8 @@ Test File Models.Storage
 import unittest
 import os
 import json
+from io import StringIO
+from unittest.mock import patch
 from os.path import exists
 from models.user import User
 from models.engine.file_storage import FileStorage
@@ -89,3 +91,26 @@ class TestFileModelsFileStorage(unittest.TestCase):
         models.storage.reload()
         after = models.storage.all()
         self.assertEqual(before, after)
+
+    def test_file_path(self):
+        """Create a file befor all test file run"""
+
+        os.system("touch file.json")
+        os.system("rm file.json")
+        before = models.storage.all()
+        models.storage.reload()
+        after = models.storage.all()
+        self.assertEqual(before, after)
+        os.system("touch file.json")
+
+    def test_storage_objects(self):
+        """Create a file befor all test file run"""
+
+        os.system("touch file.json")
+        models.storage.reload()
+        before = models.storage.all()
+        u = User()
+        u.save()
+        models.storage.reload()
+        after = models.storage.all()
+        self.assertNotEqual(before, after)
