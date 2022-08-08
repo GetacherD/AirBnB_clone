@@ -255,7 +255,6 @@ class HBNBCommand(cmd.Cmd):
                         print("** instance id missing **")
                     else:
                         models.storage.reload()
-                        models.storage.reload()
                         objects = models.storage.all()
                         key = f"{line.split('.')[0]}.{_id[1:-1]}"
                         obj = objects.get(key, None)

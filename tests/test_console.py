@@ -17,6 +17,7 @@ from models.state import State
 from models.amenity import Amenity
 from models.place import Place
 
+
 def setUpModule():
     """Run before all test"""
     print("Testing Console")
@@ -1000,6 +1001,6 @@ class TestConsole(unittest.TestCase):
         obj = Amenity()
         obj.save()
         with patch("sys.stdout", new=StringIO()) as stdout:
-            HBNBCommand().onecmd(f"User.Amenity('{obj.id}', Name)")
+            HBNBCommand().onecmd(f"Amenity.update('{obj.id}', Name)")
             exp = "** value missing **\n"
             self.assertEqual(exp, stdout.getvalue())

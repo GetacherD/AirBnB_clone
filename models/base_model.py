@@ -25,6 +25,7 @@ class BaseModel:
                         self.__dict__[key] = datetime.fromisoformat(value)
                     else:
                         self.__dict__[key] = value
+            models.storage.new(self)
         else:
             models.storage.new(self)
 
