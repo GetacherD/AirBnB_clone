@@ -102,7 +102,3 @@ class TestFileModelsFileStorage(unittest.TestCase):
         after = models.storage.all()
         self.assertEqual(before, after)
         os.system("touch file.json")
-
-    def test_storage_objects(self):
-        """Create a file befor all test file run"""
-        self.assertTrue(type(models.storage.all()), dict)
