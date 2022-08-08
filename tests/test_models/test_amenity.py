@@ -6,6 +6,8 @@ import unittest
 import datetime
 import os
 import json
+from io import StringIO
+from unittest.mock import patch
 from models.engine.file_storage import FileStorage
 from models.amenity import Amenity
 storage = FileStorage()
@@ -28,6 +30,14 @@ class TestAmenity(unittest.TestCase):
     def setUpClass(cls):
         """Create an empty file.json"""
         os.system("touch ./file.json")
+
+    def test_name(self):
+
+        """ test for email"""
+        u = Amenity()
+        with patch("sys.stdout", new=StringIO()) as stdout:
+            print(u.name)
+            self.assertEqual("\n", stdout.getvalue())
 
     def test_uniq_id(self):
         """Remove file.json after all test"""
