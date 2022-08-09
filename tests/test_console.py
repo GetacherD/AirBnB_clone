@@ -1301,3 +1301,7 @@ class TestConsole(unittest.TestCase):
             HBNBCommand().onecmd(f"Amenity.update('{obj.id}', Name)")
             exp = "** value missing **\n"
             self.assertEqual(exp, stdout.getvalue())
+
+
+if __name__ == "__main__":
+    unittest.main()
