@@ -36,7 +36,7 @@ class FileStorage():
 
     def reload(self):
         """ reload from file all objects"""
-        if exists(FileStorage.__file_path):
+        try:
             with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 data = json.loads(file.read())
                 for key, value in data.items():
@@ -44,4 +44,6 @@ class FileStorage():
                     for k, v in value.items():
                         dt[k] = v
                     obj = eval("{}".format(key.split(".")[0]))(**dt)
-                    FileStorage.__objects[key] = obj
+                    self.new(obj)
+        except FileNotFoundError:
+            return
