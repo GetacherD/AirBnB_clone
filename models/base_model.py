@@ -21,8 +21,7 @@ class BaseModel():
                         setattr(self, key, datetime.fromisoformat(value))
                     else:
                         setattr(self, key, value)
-        else:
-            models.storage.new(self)
+        models.storage.new(self)
 
     def __str__(self):
         """ str representation """
@@ -32,6 +31,7 @@ class BaseModel():
     def save(self):
         """ save instance """
         self.updated_at = datetime.utcnow()
+        models.storage.new(self)
         models.storage.save()
 
     def to_dict(self):

@@ -5,6 +5,7 @@ File Storage Module
 import json
 from os.path import exists
 from models.base_model import BaseModel
+from models.user import User
 
 
 class FileStorage():
@@ -35,7 +36,6 @@ class FileStorage():
 
     def reload(self):
         """ reload from file all objects"""
-        FileStorage.__objects = {}
         if exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 data = json.loads(file.read())
