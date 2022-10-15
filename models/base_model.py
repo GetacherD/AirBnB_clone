@@ -4,49 +4,34 @@ Base Model to be inherited
 """
 import uuid
 from datetime import datetime
-import models
 
 
-class BaseModel:
-
-    """ Base Model Representation """
+class BaseModel():
+    """ Base Model for all """
     def __init__(self, *args, **kwargs):
-
-        """ Initialization with or with out kwargs
-        kwargs assumed to contain isoformatted datetime object
-        """
+        """ Initialize new object """
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
-        if kwargs:
-            for key, value in kwargs.items():
-                if key != "__class__":
-                    if key in ["updated_at", "created_at"]:
-                        self.__dict__[key] = datetime.fromisoformat(value)
-                    else:
-                        self.__dict__[key] = value
-            models.storage.new(self)
-        else:
-            models.storage.new(self)
+        for key, value in kwargs.items():
+            if key != "__class__":
+                if key in ["created_at", "updated_at"]:
+                    setattr(self, key, datetime.fromisoformat(value))
+                else:
+                    setattr(self, key, value)
 
     def __str__(self):
-
-        """ String Representation """
-        return "[{}] ({}) ({})".format(self.__class__.__name__,
-                                       getattr(self, "id"), self.__dict__)
+        """ str representation """
+        return "[{}] ({}) {}".format(
+            self.__class__.__name__, self.id, self.__dict__)
 
     def save(self):
-
-        """ save instance to file"""
-        setattr(self, "updated_at",  datetime.now())
-        models.storage.new(self)
-        models.storage.save()
+        """ save instance """
+        self.updated_at = datetime.now()
 
     def to_dict(self):
-
-        """ Return Dict Representation """
-        dic = self.__dict__.copy()
-        dic["updated_at"] = dic["updated_at"].isoformat()
-        dic["created_at"] = dic["created_at"].isoformat()
-        dic["__class__"] = self.__class__.__name__
-        return dic
+        """ convert to dict """
+        res = self.__dict__.copy()
+        res["__class__"] = self.__class__.__name__
+        res["updated_at"] = datetime.isoformat(res["updated_at"])
+        res["created_at"] = datetime.isoformat(res["created_at"])
