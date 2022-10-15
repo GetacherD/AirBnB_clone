@@ -4,6 +4,7 @@ Base Model to be inherited
 """
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel():
@@ -20,6 +21,8 @@ class BaseModel():
                         setattr(self, key, datetime.fromisoformat(value))
                     else:
                         setattr(self, key, value)
+        else:
+            storage.new(self)
 
     def __str__(self):
         """ str representation """
@@ -29,6 +32,7 @@ class BaseModel():
     def save(self):
         """ save instance """
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """ convert to dict """
