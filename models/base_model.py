@@ -11,7 +11,6 @@ class BaseModel():
     """ Base Model for all """
     def __init__(self, *args, **kwargs):
         """ Initialize new object """
-        args = None
         self.id = str(uuid.uuid4())
         self.created_at = datetime.utcnow()
         self.updated_at = datetime.utcnow()
@@ -22,7 +21,8 @@ class BaseModel():
                         setattr(self, key, datetime.fromisoformat(value))
                     else:
                         setattr(self, key, value)
-        models.storage.new(self)
+        else:
+            models.storage.new(self)
 
     def __str__(self):
         """ str representation """
