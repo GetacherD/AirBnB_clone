@@ -45,7 +45,6 @@ class FileStorage():
         if exists(FileStorage.__file_path):
             with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
                 data = json.loads(file.read())
-                print("here is the data", data)
                 for key, value in data.items():
                     dt = {}
                     for k, v in value.items():
