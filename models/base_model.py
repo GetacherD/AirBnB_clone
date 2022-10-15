@@ -12,8 +12,8 @@ class BaseModel():
     def __init__(self, *args, **kwargs):
         """ Initialize new object """
         self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
         if kwargs:
             for key, value in kwargs.items():
                 if key != "__class__":
@@ -31,7 +31,7 @@ class BaseModel():
 
     def save(self):
         """ save instance """
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.utcnow()
         models.storage.save()
 
     def to_dict(self):
