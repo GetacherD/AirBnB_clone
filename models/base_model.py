@@ -35,3 +35,4 @@ class BaseModel():
         res["__class__"] = self.__class__.__name__
         res["updated_at"] = datetime.isoformat(res["updated_at"])
         res["created_at"] = datetime.isoformat(res["created_at"])
+        return res
