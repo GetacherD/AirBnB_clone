@@ -2,10 +2,9 @@
 """
 File Storage Module
 """
-import os
 import json
-from datetime import datetime
 from os.path import exists
+from models.base_model import BaseModel
 
 
 class FileStorage():
@@ -13,10 +12,6 @@ class FileStorage():
     __file_path = "file.json"
     """ Store all objects as key:value(object)"""
     __objects = {}
-
-    def __init__(self, *args, **kwargs):
-        """ initialize file storage class """
-        pass
 
     def all(self):
         """ Retrive all objects"""
@@ -39,7 +34,6 @@ class FileStorage():
             file.write(json.dumps(dump))
 
     def reload(self):
-        from models.base_model import BaseModel
         """ reload from file all objects"""
         FileStorage.__objects = {}
         if exists(FileStorage.__file_path):
