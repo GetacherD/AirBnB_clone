@@ -16,38 +16,6 @@ from models.base_model import BaseModel
 from models.place import Place
 
 
-class DateTimeEncoder(JSONEncoder):
-
-    """ DateTimeEncoder to encode datetime objecsts to json"""
-    def default(self, o):
-
-        """ Default encoding """
-        if isinstance(o, (datetime, datetime.date)):
-            return o.isoformat()
-        return super().default(o)
-
-
-'''
-class DateTimeDecoder(JSONDecoder):
-
-    """ Custom DateTimeDecoder """
-    def __init__(self, **kwargs):
-        kwargs.setdefault("object_hook", self.object_hook)
-        super().__init__(**kwargs)
-
-    def object_hook(self, dict_):
-        """Try to decode a complex number."""
-        dic = {}
-        for key, value in dict_.items():
-            try:
-                dic[key] = datetime.fromisoformat(value)
-            except (ValueError, TypeError, json.decoder.JSONDecodeError):
-                dic[key] = value
-        return dic
-
-'''
-
-
 class FileStorage:
 
     """ File Storage Objects Representation"""
@@ -86,4 +54,4 @@ class FileStorage:
                     obj = eval(key.split(".")[0])(**value)
                     FileStorage.__objects[key] = obj
         except FileNotFoundError:
-            return
+            pass
