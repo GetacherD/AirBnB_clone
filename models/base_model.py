@@ -14,9 +14,18 @@ class BaseModel:
         """ Initialization with or with out kwargs
         kwargs assumed to contain isoformatted datetime object
         """
-        self.id = str(uuid.uuid4())
-        self.created_at = datetime.utcnow()
-        self.updated_at = datetime.utcnow()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key in ["created_at", "updated_at"]:
+                    self.__dict__[key] = datetime.fromisoformat(value)
+                else:
+                    self.__dict__[key] = value
+            if self.__dict__["__class__"]:
+                del self.__dict__["__class__"]
+        else:
+            self.id = str(uuid.uuid4())
+            self.created_at = datetime.utcnow()
+            self.updated_at = datetime.utcnow()
 
     def __str__(self):
 
