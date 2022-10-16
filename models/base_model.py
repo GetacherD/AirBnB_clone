@@ -4,7 +4,6 @@ Base Model to be inherited
 """
 import uuid
 from datetime import datetime
-import models
 
 
 class BaseModel:
@@ -16,31 +15,19 @@ class BaseModel:
         kwargs assumed to contain isoformatted datetime object
         """
         self.id = str(uuid.uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
-        if kwargs:
-            for key, value in kwargs.items():
-                if key != "__class__":
-                    if key in ["updated_at", "created_at"]:
-                        self.__dict__[key] = datetime.fromisoformat(value)
-                    else:
-                        self.__dict__[key] = value
-            models.storage.new(self)
-        else:
-            models.storage.new(self)
+        self.created_at = datetime.utcnow()
+        self.updated_at = datetime.utcnow()
 
     def __str__(self):
 
         """ String Representation """
         return "[{}] ({}) ({})".format(self.__class__.__name__,
-                                       getattr(self, "id"), self.__dict__)
+                                       self.id, self.__dict__)
 
     def save(self):
 
         """ save instance to file"""
-        setattr(self, "updated_at",  datetime.now())
-        models.storage.new(self)
-        models.storage.save()
+        self.updated_at = datetime.utcnow()
 
     def to_dict(self):
 
