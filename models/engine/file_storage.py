@@ -2,48 +2,90 @@
 """
 File Storage Module
 """
+import os
 import json
+from json import JSONEncoder
+from datetime import datetime
 from os.path import exists
-from models.base_model import BaseModel
 from models.user import User
+from models.state import State
+from models.review import Review
+from models.amenity import Amenity
+from models.city import City
+from models.base_model import BaseModel
+from models.place import Place
 
 
-class FileStorage():
-    """ File storage representation"""
+class DateTimeEncoder(JSONEncoder):
+
+    """ DateTimeEncoder to encode datetime objecsts to json"""
+    def default(self, o):
+
+        """ Default encoding """
+        if isinstance(o, (datetime, datetime.date)):
+            return o.isoformat()
+        return super().default(o)
+
+
+'''
+class DateTimeDecoder(JSONDecoder):
+
+    """ Custom DateTimeDecoder """
+    def __init__(self, **kwargs):
+        kwargs.setdefault("object_hook", self.object_hook)
+        super().__init__(**kwargs)
+
+    def object_hook(self, dict_):
+        """Try to decode a complex number."""
+        dic = {}
+        for key, value in dict_.items():
+            try:
+                dic[key] = datetime.fromisoformat(value)
+            except (ValueError, TypeError, json.decoder.JSONDecodeError):
+                dic[key] = value
+        return dic
+
+'''
+
+
+class FileStorage:
+
+    """ File Storage Objects Representation"""
     __file_path = "file.json"
-    """ Store all objects as key:value(object)"""
     __objects = {}
 
     def all(self):
-        """ Retrive all objects"""
+
+        """ Return all objecsts """
         return FileStorage.__objects
 
     def new(self, obj):
-        """ add new object to __objects dict """
-        key = "{}.{}".format(obj.__class__.__name__, obj.id)
-        FileStorage.__objects[key] = obj
+
+        """ add new object to dictionary of objecsts"""
+        FileStorage.__objects[
+            f"{obj.__class__.__name__}.{obj.id}"] = obj
 
     def save(self):
-        """ save __objects dict to file """
+
+        """ save objects dictionary to json file"""
+        # first convert each objects to json
+        objects = FileStorage.__objects
+        obj_dic = {key: objects[key].to_dict() for key in objects}
         with open(FileStorage.__file_path, "w", encoding="utf-8") as file:
-            dump = {}
-            for key, value in FileStorage.__objects.items():
-                dt = {}
-                for k, v in value.to_dict().items():
-                    dt[k] = v
-                dump[key] = dt
-            file.write(json.dumps(dump))
+            json.dump(obj_dic, file)
 
     def reload(self):
-        """ reload from file all objects"""
-        try:
-            with open(FileStorage.__file_path, "r", encoding="utf-8") as file:
-                data = json.loads(file.read())
-                for key, value in data.items():
-                    dt = {}
-                    for k, v in value.items():
-                        dt[k] = v
-                    obj = eval("{}".format(key.split(".")[0]))(**dt)
-                    self.new(obj)
-        except FileNotFoundError:
+
+        """ Deserialize, load objects from json"""
+        if exists(FileStorage.__file_path) and os.path.getsize(
+                FileStorage.__file_path) != 0:
+            with open(FileStorage.__file_path, encoding="utf-8") as file:
+                result = json.load(file)
+                FileStorage.__objects = {}
+                for key, value in result.items():
+                    d = value.copy()
+                    cls_name = d["__class__"]
+                    del d["__class__"]
+                    self.new(eval(cls_name)(**d))
+        else:
             return
