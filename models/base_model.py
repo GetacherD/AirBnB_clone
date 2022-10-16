@@ -20,7 +20,7 @@ class BaseModel:
                     self.__dict__[key] = datetime.fromisoformat(value)
                 else:
                     self.__dict__[key] = value
-            if self.__dict__["__class__"]:
+            if self.__dict__.get("__class__", None):
                 del self.__dict__["__class__"]
         else:
             self.id = str(uuid.uuid4())
